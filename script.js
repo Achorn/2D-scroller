@@ -45,6 +45,7 @@ window.addEventListener("load", (e) => {
       this.frameY = 0;
       this.speed = 0;
       this.vy = 0;
+      this.weight = 1.5;
     }
     draw(context) {
       context.fillStyle = "white";
@@ -62,20 +63,37 @@ window.addEventListener("load", (e) => {
       );
     }
     update(input) {
-      this.x += this.speed;
+      //controlls
       if (input.keys.indexOf("ArrowRight") > -1) {
         this.speed = 5;
       } else if (input.keys.indexOf("ArrowLeft") > -1) {
         this.speed = -5;
-      } else if (input.keys.indexOf("ArrowUp") > -1) {
+      } else if (input.keys.indexOf("ArrowUp") > -1 && this.onGround()) {
         this.vy -= 30;
       } else {
         this.speed = 0;
       }
 
+      //horizontal movement
+      this.x += this.speed;
       if (this.x < 0) this.x = 0;
       if (this.x > this.gameWidth - this.width)
         this.x = this.gameWidth - this.width;
+
+      //vertical movement
+      this.y += this.vy;
+      if (!this.onGround()) {
+        this.vy += this.weight;
+        this.frameY = 1;
+      } else {
+        this.vy = 0;
+        this.frameY = 0;
+      }
+      if (this.y > this.gameHeight - this.height)
+        this.y = this.gameHeight - this.height;
+    }
+    onGround() {
+      return this.y >= this.gameHeight - this.height;
     }
   }
 
