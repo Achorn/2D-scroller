@@ -6,6 +6,7 @@ window.addEventListener("load", (e) => {
   let enemies = [];
   let score = 0;
   let gameOver = false;
+
   class InputHandler {
     constructor() {
       this.keys = [];
@@ -102,10 +103,12 @@ window.addEventListener("load", (e) => {
         this.speed = 5;
       } else if (input.keys.indexOf("ArrowLeft") > -1) {
         this.speed = -5;
-      } else if (input.keys.indexOf("ArrowUp") > -1 && this.onGround()) {
-        this.vy -= 30;
       } else {
         this.speed = 0;
+      }
+
+      if (input.keys.indexOf("ArrowUp") > -1 && this.onGround()) {
+        this.vy -= 30;
       }
 
       //horizontal movement
