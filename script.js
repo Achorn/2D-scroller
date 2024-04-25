@@ -8,14 +8,13 @@ window.addEventListener("load", (e) => {
     constructor() {
       this.keys = [];
 
-      //arrow function lets even handler remember where this.keys came from
       document.addEventListener("keydown", (e) => {
-        console.log(e.key);
         if (
-          e.key === "ArrowDown" ||
-          e.key === "ArrowUp" ||
-          e.key === "ArrowLeft" ||
-          (e.key === "ArrowRight" && this.keys.indexOf(e.key) === -1)
+          (e.key === "ArrowDown" ||
+            e.key === "ArrowUp" ||
+            e.key === "ArrowLeft" ||
+            e.key === "ArrowRight") &&
+          this.keys.indexOf(e.key) === -1
         ) {
           this.keys.push(e.key);
         }
@@ -36,7 +35,26 @@ window.addEventListener("load", (e) => {
     }
   }
 
-  class Player {}
+  class Player {
+    constructor(gameWidth, gameHeight) {
+      this.gameWidth = gameWidth;
+      this.gameHeight = gameHeight;
+      this.width = 200;
+      this.height = 200;
+      this.x = 10;
+      this.y = this.gameHeight - this.height;
+      this.image = document.getElementById("playerImage");
+    }
+    draw(context) {
+      console.log("hello");
+      context.fillStyle = "white";
+      // context.fillRect(this.x, this.y, this.width, this.height);
+      this.drawImage();
+    }
+    update() {
+      this.x++;
+    }
+  }
 
   class Background {}
 
@@ -46,5 +64,13 @@ window.addEventListener("load", (e) => {
   function displayStatusText() {}
 
   const input = new InputHandler();
-  function animate() {}
+  const player = new Player(canvas.width, canvas.height);
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    player.draw(ctx);
+    player.update();
+    requestAnimationFrame(animate);
+  }
+  animate();
 });
