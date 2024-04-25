@@ -121,10 +121,14 @@ window.addEventListener("load", (e) => {
       this.y += this.vy;
       if (!this.onGround()) {
         this.vy += this.weight;
-        this.maxFrame = 5;
+        if (this.maxFrame != 5) {
+          this.maxFrame = 5;
+          this.frameX = 0;
+        }
         this.frameY = 1;
       } else {
         this.maxFrame = 8;
+
         this.vy = 0;
         this.frameY = 0;
       }
