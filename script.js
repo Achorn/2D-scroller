@@ -4,7 +4,7 @@ window.addEventListener("load", (e) => {
   canvas.width = 800;
   canvas.height = 720;
   let enemies = [];
-
+  let score = 0;
   class InputHandler {
     constructor() {
       this.keys = [];
@@ -43,14 +43,27 @@ window.addEventListener("load", (e) => {
       this.y = this.gameHeight - this.height;
       this.image = document.getElementById("playerImage");
       this.frameX = 0;
+      this.maxFrame = 8;
       this.frameY = 0;
+      this.fps = 20;
+      this.frameTimer = 0;
+      this.frameInterval = 1000 / this.fps;
       this.speed = 0;
       this.vy = 0;
       this.weight = 1;
     }
     draw(context) {
-      // context.fillStyle = "white";
-      // context.fillRect(this.x, this.y, this.width, this.height);
+      context.strokeStyle = "white";
+      context.strokeRect(this.x, this.y, this.width, this.height);
+      context.beginPath();
+      context.arc(
+        this.x + this.width * 0.5,
+        this.y + this.height * 0.5,
+        this.width / 2,
+        0,
+        Math.PI * 2
+      );
+      context.stroke();
       context.drawImage(
         this.image,
         this.frameX * this.width,
@@ -63,7 +76,16 @@ window.addEventListener("load", (e) => {
         this.height
       );
     }
-    update(input) {
+    update(input, deltaTime) {
+      //sprite animation
+      if (this.frameTimer > this.frameInterval) {
+        if (this.frameX >= this.maxFrame) this.frameX = 0;
+        else this.frameX++;
+        this.frameTimer = 0;
+      } else {
+        this.frameTimer += deltaTime;
+      }
+
       //controlls
       if (input.keys.indexOf("ArrowRight") > -1) {
         this.speed = 5;
@@ -85,8 +107,10 @@ window.addEventListener("load", (e) => {
       this.y += this.vy;
       if (!this.onGround()) {
         this.vy += this.weight;
+        this.maxFrame = 5;
         this.frameY = 1;
       } else {
+        this.maxFrame = 8;
         this.vy = 0;
         this.frameY = 0;
       }
@@ -136,12 +160,29 @@ window.addEventListener("load", (e) => {
       this.x = this.gameWidth;
       this.y = this.gameHeight - this.height;
       this.frameX = 0;
+      this.maxFrame = 5;
+      this.fps = 20;
+      this.frameTimer = 0;
+      this.frameInterval = 1000 / this.fps;
       this.speed = 8;
+      this.markedForDeletion = false;
     }
     draw(context) {
+      context.strokeStyle = "white";
+
+      context.strokeRect(this.x, this.y, this.width, this.height);
+      context.beginPath();
+      context.arc(
+        this.x + this.width * 0.5,
+        this.y + this.height * 0.5,
+        this.width / 2,
+        0,
+        Math.PI * 2
+      );
+      context.stroke();
       context.drawImage(
         this.image,
-        0 * this.width,
+        this.frameX * this.width,
         0,
         this.width,
         this.height,
@@ -151,8 +192,18 @@ window.addEventListener("load", (e) => {
         this.height
       );
     }
-    update() {
+    update(deltaTime) {
+      if (this.frameTimer > this.frameInterval) {
+        if (this.frameX >= this.maxFrame) this.frameX = 0;
+        else this.frameX++;
+        this.frameTimer = 0;
+      } else this.frameTimer += deltaTime;
       this.x -= this.speed;
+
+      if (this.x + this.width < 0) {
+        this.markedForDeletion = true;
+        score++;
+      }
     }
   }
 
@@ -166,11 +217,18 @@ window.addEventListener("load", (e) => {
     }
     enemies.forEach((enemy) => {
       enemy.draw(ctx);
-      enemy.update();
+      enemy.update(deltaTime);
     });
+    //check for deletion
+    enemies = enemies.filter((enemy) => !enemy.markedForDeletion);
+    console.log(enemies);
   }
 
-  function displayStatusText() {}
+  function displayStatusText(context) {
+    context.fillStyle = "black";
+    context.font = "40px Helveti ca";
+    context.fillText("Score " + score, 20, 50);
+  }
 
   const input = new InputHandler();
   const player = new Player(canvas.width, canvas.height);
@@ -183,14 +241,14 @@ window.addEventListener("load", (e) => {
 
   function animate(timeStamp) {
     const deltaTime = timeStamp - lastTime;
-    console.log(deltaTime);
     lastTime = timeStamp;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     background.draw(ctx);
     background.update();
     player.draw(ctx);
-    player.update(input);
+    player.update(input, deltaTime);
     handleEnemies(deltaTime);
+    displayStatusText(ctx);
     requestAnimationFrame(animate);
   }
   animate(0);
