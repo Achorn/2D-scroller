@@ -74,7 +74,7 @@ window.addEventListener("load", (e) => {
         const dy = enemy.y + enemy.height / 2 - (this.y + this.width / 2);
         const distance = Math.sqrt(dx * dx + dy * dy);
         if (distance < enemy.width / 2 + this.width / 2) {
-          gameOver = true;
+          // gameOver = true;
         }
       });
 
