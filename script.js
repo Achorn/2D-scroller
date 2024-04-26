@@ -41,8 +41,8 @@ window.addEventListener("load", (e) => {
       this.gameHeight = gameHeight;
       this.width = 200;
       this.height = 200;
-      this.x = 10;
-      this.y = this.gameHeight - this.height;
+      this.x = 80;
+      this.y = this.gameHeight - this.height - 250;
       this.image = document.getElementById("playerImage");
       this.frameX = 0;
       this.maxFrame = 8;
@@ -74,7 +74,7 @@ window.addEventListener("load", (e) => {
         const dy = enemy.y + enemy.height / 2 - (this.y + this.width / 2);
         const distance = Math.sqrt(dx * dx + dy * dy);
         if (distance < enemy.width / 2 + this.width / 2) {
-          // gameOver = true;
+          gameOver = true;
         }
       });
 
@@ -121,11 +121,11 @@ window.addEventListener("load", (e) => {
         this.vy = 0;
         this.frameY = 0;
       }
-      if (this.y > this.gameHeight - this.height)
-        this.y = this.gameHeight - this.height;
+      if (this.y > this.gameHeight - this.height - 50)
+        this.y = this.gameHeight - this.height - 50;
     }
     onGround() {
-      return this.y >= this.gameHeight - this.height;
+      return this.y >= this.gameHeight - this.height - 50;
     }
   }
 
@@ -165,7 +165,7 @@ window.addEventListener("load", (e) => {
       this.height = 119;
       this.image = document.getElementById("enemyImage");
       this.x = this.gameWidth;
-      this.y = this.gameHeight - this.height;
+      this.y = this.gameHeight - this.height - 50;
       this.frameX = 0;
       this.maxFrame = 5;
       this.fps = 20;
